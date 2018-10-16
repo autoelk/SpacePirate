@@ -42,17 +42,17 @@ function _update()
     end
 		-- star movement
 		for i = 1, numstars do
-			if stars[i].x > 134 then
+			if stars[i].x > 128 + stars[i].r * 2 then
 				stars[i] = starcreate(-stars[i].r * 3)
 			end
 			if stars[i].x < -stars[i].r * 3 then
-				stars[i] = starcreate(134)
+				stars[i] = starcreate(128 + stars[i].r * 2)
 			end
-			if stars[i].y > 134 then
+			if stars[i].y > 128 + stars[i].r * 2 then
 				stars[i] = starcreate(rnd(134), -stars[i].r * 3)
 			end
 			if stars[i].y < -stars[i].r * 3 then
-				stars[i] = starcreate(rnd(134), 134)
+				stars[i] = starcreate(rnd(128 + stars[i].r * 2), 128 + stars[i].r * 2)
 			end
 			stars[i].x -= player.vx * stars[i].s
 			stars[i].y -= player.vy * stars[i].s
