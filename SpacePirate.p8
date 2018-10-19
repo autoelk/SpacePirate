@@ -9,19 +9,37 @@ function _init()
 	player = {}
 	stars = {}
   bullets = {}
-	numstars = 10
-	for i=1,numstars do
+	for i = 1, 10 do
 		stars[i] = starcreate()
 	end
   spawn()
 end
 
--- function shoot()
---   local bullet = {}
---   if player.dir = 2 then
---
---   end
--- end
+function shoot()
+  local bullet = {}
+	if player.dir == 0 then
+		bullet.xspeed = -3
+		bullet.yspeed = 0
+		bullet.x = 60
+		bullet.y = 64
+	elseif player.dir == 1 then
+		bullet.xspeed = 3
+		bullet.yspeed = 0
+		bullet.x = 68
+		bullet.y = 64
+	elseif player.dir == 2 then
+		bullet.xspeed = 0
+		bullet.yspeed = -3
+		bullet.x = 64
+		bullet.y = 60
+  elseif player.dir == 3 then
+		bullet.xspeed = 0
+		bullet.yspeed = 3
+		bullet.x = 64
+		bullet.y = 68
+  end
+	add(bullets, bullet)
+end
 
 function starcreate()
 	local star = {}
@@ -35,12 +53,6 @@ end
 function _update()
   gametime = gametime + 1
   if gamestage == "space" then
-    if btnp(4) then
-      player.ship += 1
-      if player.ship > 2 then
-        player.ship = 0
-      end
-    end
 		-- exit ship
 		if btnp(5) then
 			gameStage = "platform"
@@ -70,20 +82,22 @@ function _update()
     end
     player.x += player.vx
     player.y += player.vy
-    if player.vx > player.speed then
-      player.vx = player.speed
-    end
-    if player.vy > player.speed then
-      player.vy = player.speed
-    end
-    if player.vx < -player.speed then
-      player.vx = -player.speed
-    end
-    if player.vy < -player.speed then
-      player.vy = -player.speed
-    end
+    if player.vx > player.speed then player.vx = player.speed end
+    if player.vy > player.speed then player.vy = player.speed end
+    if player.vx < -player.speed then player.vx = -player.speed end
+    if player.vy < -player.speed then player.vy = -player.speed end
+		-- shooting
+		if btn(4) then
+			shoot()
+		end
+		-- bullet movement
+		for b in all(bullets) do
+			if b.x > 128 + 2 or b.x < 0 - 2 or b.y > 128 + 2 or b.y < 0 - 2 then del(bullets, b) end
+			b.x += b.xspeed - player.vx
+			b.y += b.yspeed - player.vy
+		end
 		-- star movement
-		for i = 1, numstars do
+		for i = 1, #stars do
 			if stars[i].x > 128 + stars[i].r * 2 then
 				stars[i] = starcreate()
         stars[i].x = -stars[i].r * 3
@@ -177,13 +191,16 @@ end
 function _draw()
   cls() --clear the screen
   if gamestage == "space" then
-		for i = 1, numstars do
-			circfill(stars[i].x, stars[i].y, stars[i].r)
+		for s in all(stars) do
+			circfill(s.x, s.y, s.r)
+		end
+		for b in all(bullets) do
+			rectfill(b.x - 1, b.y - 1, b.x, b.y, 1)
 		end
     spr(player.sprite, 60, 60)
   end
   if gamestage == "platform" then
-    rectfill(0, 0, 128, 128, 12)
+    rectfill(0, 0, 128, 128, 0)
   	if player.x <= 60 then --don't track if at left edge
   		map(0, 0, 0, 0, 128, 128)
   		spr(player.sprite, player.x, player.y)
@@ -194,9 +211,10 @@ function _draw()
   		map(0, 0, -player.x + 60, 0, 128, 128)
   		spr(player.sprite, 60, player.y)
   	end
-  	print(player.x, 0, 0, 7)
-  	print(player.y, 0, 7, 7)
   end
+	print(player.x, 0, 0, 7)
+	print(player.y, 0, 7, 7)
+	print(#bullets, 0, 14, 7)
 end
 
 function check_tile(flag, offsetx, offsety)
