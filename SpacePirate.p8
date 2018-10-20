@@ -31,27 +31,27 @@ end
 function shoot()
   local bullet = {}
 	if player.dir == 0 then
-		bullet.xspeed = -(ships[player.ship].speed + 1)
+		bullet.xspeed = -(player.ship.speed + 1)
 		bullet.yspeed = 0
 		bullet.x = 60
 		bullet.y = 64
 	elseif player.dir == 1 then
-		bullet.xspeed = (ships[player.ship].speed + 1)
+		bullet.xspeed = (player.ship.speed + 1)
 		bullet.yspeed = 0
 		bullet.x = 68
 		bullet.y = 64
 	elseif player.dir == 2 then
 		bullet.xspeed = 0
-		bullet.yspeed = -(ships[player.ship].speed + 1)
+		bullet.yspeed = -(player.ship.speed + 1)
 		bullet.x = 64
 		bullet.y = 60
   elseif player.dir == 3 then
 		bullet.xspeed = 0
-		bullet.yspeed = (ships[player.ship].speed + 1)
+		bullet.yspeed = (player.ship.speed + 1)
 		bullet.x = 64
 		bullet.y = 68
   end
-	bullet.color = ships[player.ship].color
+	bullet.color = player.ship.color
 	add(bullets, bullet)
 end
 
@@ -67,11 +67,11 @@ end
 function _update()
   gametime = gametime + 1
   if gamestage == "space" then
-		player.speed = ships[player.ship].speed
 		-- change ship
 		if btnp(5) then
-			player.ship += 1
-			if player.ship > #ships then player.ship = 1 end
+			player.shipnum += 1
+			if player.shipnum > #ships then player.shipnum = 1 end
+			player.ship = ships[player.shipnum]
 		end
 		-- exit ship
 		-- if btnp(5) then
@@ -80,32 +80,32 @@ function _update()
 		-- end
 		-- player movement
     if btn(0) then
-      player.vx -= player.speed / 10
+      player.vx -= player.ship.speed / 10
       player.dir = 0
     end
     if btn(1) then
-      player.vx += player.speed / 10
+      player.vx += player.ship.speed / 10
       player.dir = 1
     end
     if btn(2) then
-      player.vy -= player.speed / 10
+      player.vy -= player.ship.speed / 10
       player.dir = 2
     end
     if btn(3) then
-      player.vy += player.speed / 10
+      player.vy += player.ship.speed / 10
       player.dir = 3
     end
     if(gametime % 12 < 6) then
-      player.sprite = 48 + 16 * player.ship + 2 * player.dir
+      player.sprite = 48 + 16 * player.shipnum + 2 * player.dir
     else
-      player.sprite = 48 + 16 * player.ship + 2 * player.dir + 1
+      player.sprite = 48 + 16 * player.shipnum + 2 * player.dir + 1
     end
     player.x += player.vx
     player.y += player.vy
-    if player.vx > player.speed then player.vx = player.speed end
-    if player.vy > player.speed then player.vy = player.speed end
-    if player.vx < -player.speed then player.vx = -player.speed end
-    if player.vy < -player.speed then player.vy = -player.speed end
+    if player.vx > player.ship.speed then player.vx = player.ship.speed end
+    if player.vy > player.ship.speed then player.vy = player.ship.speed end
+    if player.vx < -player.ship.speed then player.vx = -player.ship.speed end
+    if player.vy < -player.ship.speed then player.vy = -player.ship.speed end
 		-- shooting
 		if btn(4) then
 			shoot()
@@ -248,7 +248,8 @@ function spawn()
 		player.speed = 3
     --ship
     player.dir = 2
-    player.ship = 1
+    player.shipnum = 1
+		player.ship = ships[player.shipnum]
     player.sprite = 64
   end
   if gamestage == "platform" then
