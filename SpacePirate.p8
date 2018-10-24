@@ -13,9 +13,9 @@ function _init()
 	for i = 1, 10 do
 		stars[i] = starcreate()
 	end
-	shipcreate(1, 4, 2, 2, 12)
-	shipcreate(2, 3, 4, 1, 11)
-	shipcreate(3, 2, 4, 2, 9)
+	shipcreate(1, 4, 2, 8, 12)
+	shipcreate(2, 3, 4, 5, 11)
+	shipcreate(3, 2, 4, 10, 9)
   spawn()
 end
 
@@ -107,8 +107,12 @@ function _update()
     if player.vx < -player.ship.speed then player.vx = -player.ship.speed end
     if player.vy < -player.ship.speed then player.vy = -player.ship.speed end
 		-- shooting
-		if btn(4) then
+		if btn(4) and player.ship.fr <= 0 then
 			shoot()
+		end
+		player.ship.fr -= 1
+		if player.ship.fr < 0 then
+			player.ship.fr = ships[player.shipnum].fr
 		end
 		-- bullet movement
 		for b in all(bullets) do
