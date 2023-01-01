@@ -40,3 +40,4 @@ luac.out
 *.hex
 
 ._SpacePirate.p8
+.DS_Store
